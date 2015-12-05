@@ -1,3 +1,4 @@
+package br.com.restful.desktop.app;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -19,6 +20,7 @@ public class ClienteWS {
 	private Cliente cliente = new Cliente();
 	public static final String SERVER_PORT = "8080";
 
+	public ClienteWS(){	}
 
 	public boolean connect(Cliente c){
 		cliente = c;
