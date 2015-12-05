@@ -1,8 +1,11 @@
 package br.com.restful.desktop.app;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -11,6 +14,7 @@ import org.codehaus.jettison.json.JSONObject;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 import br.com.restful.bean.Cliente;
 import br.com.restful.bean.Mensagem;
@@ -53,9 +57,17 @@ public class ClienteWS {
 		try {
 
 			Client client = Client.create();
-
-			WebResource webResource = client
-					.resource("http://localhost:"+ClienteWS.SERVER_PORT+"/Restful/chat/sendmessage/"+cliente.getUser()+"/"+cliente.getPassword()+"/"+msg);
+			//msg = processMessage(msg);			
+			UriBuilder uriBuilder = new UriBuilderImpl()
+	            .scheme("http")
+	            .host("localhost").port(8080)
+	            .path("/Restful/chat/sendmessage/"+cliente.getUser()+"/"+cliente.getPassword()+"/"+msg);
+						
+			URI uri = uriBuilder.build();
+			WebResource webResource = client.resource(uri.toString());
+			System.out.println(uri.toString());
+			//WebResource webResource = client
+			//		.resource("http://localhost:"+ClienteWS.SERVER_PORT+"/Restful/chat/sendmessage/"+cliente.getUser()+"/"+cliente.getPassword()+"/"+msg);
 
 			ClientResponse response = webResource.accept("application/json")
 					.get(ClientResponse.class);
@@ -74,6 +86,27 @@ public class ClienteWS {
 			return "Erro ao tentar enviar a mensagem.";
 		}
 
+	}
+
+	private String processMessage(String msg) {
+		String aux = "";
+		for (int i = 0; i < msg.length(); i++) {
+			if (" ".equals(new String(msg.charAt(i)+""))){
+				System.out.println("posição: "+i);
+				aux += "#@#@";
+			}else
+				aux += new String(msg.charAt(i)+"");
+		}
+		return aux;
+	}
+	
+	private String revertMessage(String msg) {
+		String aux = "";
+		String [] result = msg.split("#@#@");
+		for (String string : result) {
+			aux += string+" ";
+		}
+		return aux;
 	}
 
 	public List<Mensagem> getLsMsgs(int idLastMsg){

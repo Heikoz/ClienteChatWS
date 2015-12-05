@@ -30,7 +30,7 @@ public class MainWindow extends JFrame implements ActionListener{
 	private JTextField txtUserName;
 	private JButton btnConectar = new JButton();
 	private JLabel lblNoConectado = new JLabel();
-	private JTextArea textConsole = new JTextArea();
+	private JTextArea txtConsole = new JTextArea();
 	private JTextArea txtAreaMsgs = new JTextArea();
 	private JTextField txtMsg;
 	private JButton btnEnviar;
@@ -98,8 +98,8 @@ public class MainWindow extends JFrame implements ActionListener{
 		this.getContentPane().add(panel_1, BorderLayout.SOUTH);
 		panel_1.setLayout(new BorderLayout(0, 0));
 
-		textConsole = new JTextArea();
-		panel_1.add(textConsole);
+		txtConsole = new JTextArea();
+		panel_1.add(txtConsole);
 
 		JPanel panel_5 = new JPanel();
 		getContentPane().add(panel_5, BorderLayout.CENTER);
@@ -117,7 +117,7 @@ public class MainWindow extends JFrame implements ActionListener{
 		txtMsg = new JTextField();
 		txtMsg.setToolTipText("Para enviar uma mensagem voc\u00EA precisa estar conectado ao servidor.");
 		txtMsg.setHorizontalAlignment(SwingConstants.LEFT);
-		txtMsg.setText("\"Digite aqui sua mensagem.\"");
+		txtMsg.setText("Digite aqui sua mensagem.");
 		txtMsg.setEditable(false);
 		panel_4.add(txtMsg);
 		txtMsg.setColumns(10);
@@ -134,20 +134,20 @@ public class MainWindow extends JFrame implements ActionListener{
 		if (e.getSource() ==  btnConectar){
 			if (btnConectar.getText().equals("Conectar")){
 				if (txtUserName.getText().isEmpty()){
-					textConsole.setText("Entre com um nome para tentar se conectar ao servidor.");
+					txtConsole.setText("Entre com um nome para tentar se conectar ao servidor.");
 				}
 				else{
 					String aux = new String(txtPassword.getPassword());
 					if (aux.isEmpty())
-						textConsole.setText("Entre com uma senha para tentar se conectar ao servidor.");
+						txtConsole.setText("Entre com uma senha para tentar se conectar ao servidor.");
 					else{
-						textConsole.setText("");
+						txtConsole.setText("");
 						cws = new ClienteWS();
 
 						if (cws.connect(new Cliente(txtUserName.getText(), aux)))
 							setConnected(true);
 						else{
-							textConsole.setText("Não foi possível se conectar com o servidor.");
+							txtConsole.setText("Não foi possível se conectar com o servidor.");
 						}
 					}
 				}
@@ -157,23 +157,26 @@ public class MainWindow extends JFrame implements ActionListener{
 		}else
 			if (e.getSource() == btnEnviar){
 				if (txtMsg.getText().isEmpty() || txtMsg.getText().equals(""))
-					textConsole.setText("Entre com um texto para enviar a mensagem.");
+					txtConsole.setText("Entre com um texto para enviar a mensagem.");
 				else
-					cws.sendMessage(txtMsg.getText());
+					txtConsole.setText(cws.sendMessage(txtMsg.getText()));
 			}
 	}
 
 	private void setConnected(boolean b) {
+		btnEnviar.setEnabled(b);
+		txtMsg.setEnabled(b);
+		txtMsg.setEditable(b);
+		txtPassword.setEditable(!b);
+		txtUserName.setEditable(!b);
+		
 		if (b){
 			btnConectar.setText("Desconectar");
 			lblNoConectado.setText("Conectado");
 			lblNoConectado.setFont(new Font("Arial", Font.PLAIN, 11));
 			lblNoConectado.setForeground(Color.GREEN);
-			btnEnviar.setEnabled(true);
-			txtMsg.setEnabled(true);
+			
 		}else{
-			txtMsg.setEnabled(false);
-			btnEnviar.setEnabled(false);
 			btnConectar.setText("Conectar");
 			lblNoConectado.setText("Desconectado");
 			lblNoConectado.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -191,7 +194,7 @@ public class MainWindow extends JFrame implements ActionListener{
 	}
 
 	public JTextArea getTextConsole() {
-		return textConsole;
+		return txtConsole;
 	}
 
 	public String getNomeCliente() {
