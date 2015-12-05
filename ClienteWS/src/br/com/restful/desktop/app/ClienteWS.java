@@ -45,7 +45,7 @@ public class ClienteWS {
 	public boolean connect(Cliente c, String ip){
 		this.ip = ip;
 		cliente = c;
-		rm = new RequestMessages(c, txtArea, mw);
+		rm = new RequestMessages(c, txtArea, mw, ip);
 		t = new Thread(rm);
 		try {
 
@@ -87,7 +87,7 @@ public class ClienteWS {
 			//msg = processMessage(msg);			
 			UriBuilder uriBuilder = new UriBuilderImpl()
 	            .scheme("http")
-	            .host("localhost").port(8080)
+	            .host(ip).port(8080)
 	            .path("/Restful/chat/sendmessage/"+cliente.getUser()+"/"+cliente.getPassword()+"/"+msg);
 						
 			URI uri = uriBuilder.build();

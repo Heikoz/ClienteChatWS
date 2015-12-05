@@ -24,8 +24,10 @@ public class RequestMessages implements Runnable {
 	private MainWindow mw;
 	private boolean pararThread = false;
 	private List<Mensagem> msgs = new ArrayList<Mensagem>();
+	private String ip;
 	
-	public RequestMessages(Cliente c, JTextArea txtArea, MainWindow mw) {
+	public RequestMessages(Cliente c, JTextArea txtArea, MainWindow mw, String ip) {
+		this.ip = ip;
 		cliente = c;
 		this.txtArea = txtArea;
 		this.mw = mw;
@@ -40,7 +42,7 @@ public class RequestMessages implements Runnable {
 		try {
 
 			Client client = Client.create();
-			String url = "http://localhost:"+ClienteWS.SERVER_PORT+"/Restful/chat/getmessage/"+cliente.getUser()+"/"+cliente.getPassword()+"/"+idLastMsg;
+			String url = "http://"+ip+":"+ClienteWS.SERVER_PORT+"/Restful/chat/getmessage/"+cliente.getUser()+"/"+cliente.getPassword()+"/"+idLastMsg;
 			
 			WebResource webResource = client
 					.resource(url);
