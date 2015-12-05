@@ -49,9 +49,19 @@ public class Teste {
 	}
 	
 	public static void main(String[] args) {
-		Teste t = new Teste();
-		List<Mensagem> lsMsg = t.jsonStringToArray("[{\"corpoMensagem\":\"Olá_pessoal\",\"cliente\":{\"user\":\"Lucas\",\"password\":\"1234\"},\"hora\":1449174367550,\"id\":1},{\"corpoMensagem\":\"Oi_mano\",\"cliente\":{\"user\":\"Lucas\",\"password\":\"1234\"},\"hora\":1449174367801,\"id\":2}]");
-		System.out.println("imprimindo mensagens: \n"+lsMsg);
+		//Teste t = new Teste();
+		//List<Mensagem> lsMsg = t.jsonStringToArray("[{\"corpoMensagem\":\"Olá_pessoal\",\"cliente\":{\"user\":\"Lucas\",\"password\":\"1234\"},\"hora\":1449174367550,\"id\":1},{\"corpoMensagem\":\"Oi_mano\",\"cliente\":{\"user\":\"Lucas\",\"password\":\"1234\"},\"hora\":1449174367801,\"id\":2}]");
+		//System.out.println("imprimindo mensagens: \n"+lsMsg);
+		int i=0;
+		while(true){
+			System.out.println(i);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			i++;
+		}
 	}
 
 }

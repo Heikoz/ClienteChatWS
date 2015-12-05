@@ -17,7 +17,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JPasswordField;
 
 import br.com.restful.bean.Cliente;
-import br.com.restful.bean.Mensagem;
 import br.com.restful.desktop.app.ClienteWS;
 
 import java.awt.FlowLayout;
@@ -142,7 +141,7 @@ public class MainWindow extends JFrame implements ActionListener{
 						txtConsole.setText("Entre com uma senha para tentar se conectar ao servidor.");
 					else{
 						txtConsole.setText("");
-						cws = new ClienteWS();
+						cws = new ClienteWS(txtAreaMsgs, this);
 
 						if (cws.connect(new Cliente(txtUserName.getText(), aux)))
 							setConnected(true);
@@ -158,8 +157,11 @@ public class MainWindow extends JFrame implements ActionListener{
 			if (e.getSource() == btnEnviar){
 				if (txtMsg.getText().isEmpty() || txtMsg.getText().equals(""))
 					txtConsole.setText("Entre com um texto para enviar a mensagem.");
-				else
-					txtConsole.setText(cws.sendMessage(txtMsg.getText()));
+				else{
+					if (Boolean.parseBoolean(cws.sendMessage(txtMsg.getText())))
+						txtAreaMsgs.append("Você: "+txtMsg.getText()+"\n");
+						txtConsole.setText("Mensagem enviada.");
+				}
 			}
 	}
 
@@ -181,6 +183,7 @@ public class MainWindow extends JFrame implements ActionListener{
 			lblNoConectado.setText("Desconectado");
 			lblNoConectado.setFont(new Font("Arial", Font.PLAIN, 11));
 			lblNoConectado.setForeground(Color.RED);
+			cws.desconnect();
 		}
 
 	}
