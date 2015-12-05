@@ -99,9 +99,7 @@ public class RequestMessages implements Runnable {
 	@Override
 	public void run() {
 
-		while(!pararThread){
-			System.out.println("loop");
-			
+		while(!pararThread){			
 			for (Mensagem m : getLsMsgs(getLastMessageId())) {
 				msgs.add(m);
 				if (!m.getCliente().getUser().equals(cliente.getUser())){

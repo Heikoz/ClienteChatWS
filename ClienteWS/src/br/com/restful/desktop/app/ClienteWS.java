@@ -21,6 +21,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 
 import br.com.restful.bean.Cliente;
 import br.com.restful.bean.Mensagem;
+import br.com.restful.logic.IPAddressValidator;
 
 
 public class ClienteWS {
@@ -30,6 +31,7 @@ public class ClienteWS {
 	private RequestMessages rm;
 	private JTextArea txtArea;
 	private MainWindow mw;
+	private String ip;
 	
 	public ClienteWS(JTextArea txtArea, MainWindow mw){	
 		this.txtArea = txtArea;
@@ -40,28 +42,35 @@ public class ClienteWS {
 		rm.parar();
 	}
 	
-	public boolean connect(Cliente c){
+	public boolean connect(Cliente c, String ip){
+		this.ip = ip;
 		cliente = c;
 		rm = new RequestMessages(c, txtArea, mw);
 		t = new Thread(rm);
-		t.start();
 		try {
 
 			Client client = Client.create();
-
+			
 			WebResource webResource = client
-					.resource("http://localhost:"+ClienteWS.SERVER_PORT+"/Restful/chat/"+c.getUser()+"/"+c.getPassword());
+					.resource("http://"+this.ip+":"+SERVER_PORT+"/Restful/chat/"+c.getUser()+"/"+c.getPassword());
 
 			ClientResponse response = webResource.accept("application/json")
 					.get(ClientResponse.class);
-
+			
+			
+			
 			if (response.getStatus() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : "
 						+ response.getStatus());
 			}
 
 			String output = response.getEntity(String.class);
-			return Boolean.parseBoolean(output);
+			boolean result = Boolean.parseBoolean(output);
+			System.out.println("Status: "+response.getStatus());
+			if (result)
+				t.start();
+			
+			return result;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,6 +78,7 @@ public class ClienteWS {
 		}
 
 	}
+
 
 	public String sendMessage(String msg){
 		try {

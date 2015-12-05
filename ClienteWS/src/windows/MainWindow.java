@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -18,8 +19,10 @@ import javax.swing.JPasswordField;
 
 import br.com.restful.bean.Cliente;
 import br.com.restful.desktop.app.ClienteWS;
+import br.com.restful.logic.IPAddressValidator;
 
 import java.awt.FlowLayout;
+
 import javax.swing.SwingConstants;
 
 
@@ -35,6 +38,7 @@ public class MainWindow extends JFrame implements ActionListener{
 	private JButton btnEnviar;
 	private JPasswordField txtPassword = new JPasswordField();
 	private ClienteWS cws;
+	private JTextField txtIP;
 
 	/**
 	 * Launch the application.
@@ -63,12 +67,19 @@ public class MainWindow extends JFrame implements ActionListener{
 	 * Initialize the contents of the this.
 	 */
 	private void initialize() {
-		this.setBounds(100, 100, 543, 418);
+		this.setBounds(100, 100, 642, 418);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel panel = new JPanel();
 		this.getContentPane().add(panel, BorderLayout.NORTH);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+		JLabel lblIp = new JLabel("IP:");
+		panel.add(lblIp);
+
+		txtIP = new JTextField();
+		panel.add(txtIP);
+		txtIP.setColumns(10);
 
 		JLabel lblNome = new JLabel("User: ");
 		panel.add(lblNome);
@@ -133,20 +144,32 @@ public class MainWindow extends JFrame implements ActionListener{
 		if (e.getSource() ==  btnConectar){
 			if (btnConectar.getText().equals("Conectar")){
 				if (txtUserName.getText().isEmpty()){
-					txtConsole.setText("Entre com um nome para tentar se conectar ao servidor.");
+					txtConsole.setText("Entre com um nome para tentar se conectar ao WebService.");
 				}
 				else{
 					String aux = new String(txtPassword.getPassword());
 					if (aux.isEmpty())
-						txtConsole.setText("Entre com uma senha para tentar se conectar ao servidor.");
+						txtConsole.setText("Entre com uma senha para tentar se conectar ao WebService.");
 					else{
-						txtConsole.setText("");
-						cws = new ClienteWS(txtAreaMsgs, this);
-
-						if (cws.connect(new Cliente(txtUserName.getText(), aux)))
-							setConnected(true);
-						else{
-							txtConsole.setText("Não foi possível se conectar com o servidor.");
+						if (txtIP.getText().equals("")){
+							txtConsole.setText("Entre com um IP para se conectar ao WebService.");
+						}else{
+							if (!IPAddressValidator.validate(txtIP.getText())){
+								txtConsole.setText("Entre com um IP válido para se conectar ao WebService.");
+							}else{
+								cws = new ClienteWS(txtAreaMsgs, this);
+								JOptionPane.showMessageDialog(null, "Conectando-se ao WebService, aguarde...");
+								
+								System.out.println("teste");
+								
+								if (cws.connect(new Cliente(txtUserName.getText(), aux), txtIP.getText())){
+									setConnected(true);
+									txtConsole.setText("Conectado ao WebService.");
+								}
+								else{
+									txtConsole.setText("Não foi possível se conectar com o WebService.");
+								}
+							}
 						}
 					}
 				}
@@ -160,7 +183,7 @@ public class MainWindow extends JFrame implements ActionListener{
 				else{
 					if (Boolean.parseBoolean(cws.sendMessage(txtMsg.getText())))
 						txtAreaMsgs.append("Você: "+txtMsg.getText()+"\n");
-						txtConsole.setText("Mensagem enviada.");
+					txtConsole.setText("Mensagem enviada.");
 				}
 			}
 	}
@@ -171,13 +194,13 @@ public class MainWindow extends JFrame implements ActionListener{
 		txtMsg.setEditable(b);
 		txtPassword.setEditable(!b);
 		txtUserName.setEditable(!b);
-		
+
 		if (b){
 			btnConectar.setText("Desconectar");
 			lblNoConectado.setText("Conectado");
 			lblNoConectado.setFont(new Font("Arial", Font.PLAIN, 11));
 			lblNoConectado.setForeground(Color.GREEN);
-			
+
 		}else{
 			btnConectar.setText("Conectar");
 			lblNoConectado.setText("Desconectado");
